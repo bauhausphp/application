@@ -1,0 +1,13 @@
+{
+    "name": "bauhaus/application",
+    "description": "Application runner based on PSR-7 and PSR-15",
+    "type": "library",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Felipe Martins",
+            "email": "me@fefas.net"
+        }
+    ]
+}
