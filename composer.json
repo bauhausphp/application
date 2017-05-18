@@ -9,5 +9,9 @@
             "name": "Felipe Martins",
             "email": "me@fefas.net"
         }
-    ]
+    ],
+
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    }
 }
