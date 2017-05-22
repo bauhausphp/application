@@ -11,6 +11,22 @@
         }
     ],
 
+    "autoload": {
+        "psr-4": {
+            "Bauhaus\\": "src"
+        }
+    },
+
+    "require": {
+        "http-interop/http-middleware": "^0.4.1"
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Bauhaus\\": "tests/unit"
+        }
+    },
+
     "require-dev": {
         "phpunit/phpunit": "^6.1"
     }
