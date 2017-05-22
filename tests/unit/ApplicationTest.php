@@ -19,10 +19,11 @@ class ApplicationTest extends TestCase
     public function stackUpPsr15Middleware()
     {
         $middleware = new PassMiddleware();
+        $expectedStack = [$middleware];
 
         $this->application->stackUp($middleware);
 
-        $this->assertEquals([$middleware], $this->application->stack());
+        $this->assertEquals($expectedStack, $this->application->stack());
     }
 
     /**
@@ -31,8 +32,9 @@ class ApplicationTest extends TestCase
     public function stackUpPsr15MiddlewareFromString()
     {
         $this->application->stackUp(PassMiddleware::class);
+        $expectedStack = [PassMiddleware::class];
 
-        $this->assertEquals([PassMiddleware::class], $this->application->stack());
+        $this->assertEquals($expectedStack, $this->application->stack());
     }
 
     /**
