@@ -43,7 +43,7 @@ class ApplicationTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Only PSR-15 Middlewares can be stacked up
      */
-    public function exceptionOccursWhenTryingToStackUpANotPsr15Middleware(
+    public function exceptionOccursWhenStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
         $this->application->stackUp($notPsr15Middleware);
