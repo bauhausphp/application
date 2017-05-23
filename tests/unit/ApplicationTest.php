@@ -4,6 +4,7 @@ namespace Bauhaus;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ApplicationTest extends TestCase
 {
@@ -62,13 +63,68 @@ class ApplicationTest extends TestCase
 
     /**
      * @test
+     * @dataProvider applicationsThatReachTheGroundDelegator
      * @expectedException \Bauhaus\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
-    public function exceptionOccursWhenAllMiddlewaresInStackDelegateTheProcess()
-    {
+    public function exceptionOccursWhenAllMiddlewaresInStackDelegateTheProcess(
+        Application $application
+    ) {
         $serverRequest = $this->createMock(ServerRequestInterface::class);
 
-        $this->application->process($serverRequest);
+        $application->process($serverRequest);
+    }
+
+    public function applicationsThatReachTheGroundDelegator(): array
+    {
+        $appWithEmptyStack = new Application();
+
+        $appWithPassMiddleware = new Application();
+        $appWithPassMiddleware->stackUp(new PassMiddleware());
+        $appWithPassMiddleware->stackUp(new PassMiddleware());
+
+        return [
+            [$appWithEmptyStack],
+            [$appWithPassMiddleware],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider applicationsThatReturnResponse
+     */
+    public function processServerRequestDelegatingItToTheMiddlewareStack(
+        Application $application,
+        ResponseInterface $expectedResponse
+    ) {
+        $serverRequest = $this->createMock(ServerRequestInterface::class);
+
+        $response = $application->process($serverRequest);
+
+        $this->assertSame($expectedResponse, $response);
+    }
+
+    public function applicationsThatReturnResponse(): array
+    {
+        $aResponse = $this->createMock(ResponseInterface::class);
+        $anotherResponse = $this->createMock(ResponseInterface::class);
+
+        $passMiddleware = new PassMiddleware();
+        $aFixedResponseMiddleware = new FixedResponseMiddleware($aResponse);
+        $anotherFixedResponseMiddleware = new FixedResponseMiddleware($anotherResponse);
+
+        $anApplication = new Application();
+        $anApplication->stackUp($aFixedResponseMiddleware);
+        $anApplication->stackUp($passMiddleware);
+
+        $anotherApplication = new Application();
+        $anotherApplication->stackUp($aFixedResponseMiddleware);
+        $anotherApplication->stackUp($anotherFixedResponseMiddleware);
+        $anotherApplication->stackUp($passMiddleware);
+
+        return [
+            [$anApplication, $aResponse],
+            [$anotherApplication, $anotherResponse],
+        ];
     }
 }

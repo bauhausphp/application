@@ -4,6 +4,7 @@ namespace Bauhaus;
 
 use InvalidArgumentException;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -29,9 +30,9 @@ class Application
 
     public function process(ServerRequestInterface $request): ResponseInterface
     {
-        $groundDelegator = new GroundDelegator();
+        $headDelegator = $this->buildDelegatorChain();
 
-        $groundDelegator->process($request);
+        return $headDelegator->process($request);
     }
 
     private function canBeStackedUp($middleware): bool
@@ -51,5 +52,16 @@ class Application
         $implementedInterfaces = class_implements($middleware);
 
         return in_array(MiddlewareInterface::class, $implementedInterfaces);
+    }
+
+    private function buildDelegatorChain(): DelegateInterface
+    {
+        $currentDelegator = new GroundDelegator();
+
+        foreach($this->stack as $middleware) {
+            $currentDelegator = new Delegator($middleware, $currentDelegator);
+        }
+
+        return $currentDelegator;
     }
 }
