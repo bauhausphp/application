@@ -3,6 +3,7 @@
 namespace Bauhaus;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ApplicationTest extends TestCase
 {
@@ -57,5 +58,17 @@ class ApplicationTest extends TestCase
             ['some string'],
             [123],
         ];
+    }
+
+    /**
+     * @test
+     * @expectedException \Bauhaus\GroundDelegatorReachedException
+     * @expectedExceptionMessage Ground delegator reached
+     */
+    public function exceptionOccursWhenAllMiddlewaresInStackDelegateTheProcess()
+    {
+        $serverRequest = $this->createMock(ServerRequestInterface::class);
+
+        $this->application->process($serverRequest);
     }
 }

@@ -4,6 +4,8 @@ namespace Bauhaus;
 
 use InvalidArgumentException;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Application
 {
@@ -23,6 +25,13 @@ class Application
         }
 
         $this->stack[] = $middleware;
+    }
+
+    public function process(ServerRequestInterface $request): ResponseInterface
+    {
+        $lastDelegator = new GroundDelegator();
+
+        $lastDelegator->process($request);
     }
 
     private function canBeStackedUp($middleware): bool
