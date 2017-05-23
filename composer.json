@@ -1,8 +1,15 @@
 {
     "name": "bauhaus/application",
-    "description": "Application runner based on PSR-7 and PSR-15",
+    "description": "PSR-15 middleware chain application",
     "type": "library",
     "license": "MIT",
+
+    "keywords": [
+        "bauhaus",
+        "bauhaus application",
+        "psr 15 middleware",
+        "psr 15 application"
+    ],
 
     "authors": [
         {
