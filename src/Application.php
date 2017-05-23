@@ -3,7 +3,7 @@
 namespace Bauhaus;
 
 use InvalidArgumentException;
-use Interop\Http\ServerMiddleware\MiddlewareInterface as Psr15Middleware;
+use Interop\Http\ServerMiddleware\MiddlewareInterface as Middleware;
 
 class Application
 {
@@ -28,7 +28,7 @@ class Application
     private function implementsPsr15Middleware($middleware): bool
     {
         if (is_object($middleware)) {
-            return $middleware instanceof Psr15Middleware;
+            return $middleware instanceof Middleware;
         }
 
         if (false === is_string($middleware)) {
@@ -41,6 +41,6 @@ class Application
 
         $implementedInterfaces = class_implements($middleware);
 
-        return in_array(Psr15Middleware::class, $implementedInterfaces);
+        return in_array(Middleware::class, $implementedInterfaces);
     }
 }
