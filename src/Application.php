@@ -3,7 +3,7 @@
 namespace Bauhaus;
 
 use InvalidArgumentException;
-use Interop\Http\ServerMiddleware\MiddlewareInterface as Middleware;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 
 class Application
 {
@@ -28,7 +28,7 @@ class Application
     private function canBeStackedUp($middleware): bool
     {
         if (is_object($middleware)) {
-            return $middleware instanceof Middleware;
+            return $middleware instanceof MiddlewareInterface;
         }
 
         if (false === is_string($middleware)) {
@@ -41,6 +41,6 @@ class Application
 
         $implementedInterfaces = class_implements($middleware);
 
-        return in_array(Middleware::class, $implementedInterfaces);
+        return in_array(MiddlewareInterface::class, $implementedInterfaces);
     }
 }
