@@ -29,9 +29,9 @@ class Application
 
     public function process(ServerRequestInterface $request): ResponseInterface
     {
-        $lastDelegator = new GroundDelegator();
+        $groundDelegator = new GroundDelegator();
 
-        $lastDelegator->process($request);
+        $groundDelegator->process($request);
     }
 
     private function canBeStackedUp($middleware): bool
