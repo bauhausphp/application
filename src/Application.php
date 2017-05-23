@@ -16,7 +16,7 @@ class Application
 
     public function stackUp($middleware): void
     {
-        if (false === $this->implementsPsr15Middleware($middleware)) {
+        if (false === $this->canBeStackedUp($middleware)) {
             throw new InvalidArgumentException(
                 'Only PSR-15 Middlewares can be stacked up'
             );
@@ -25,7 +25,7 @@ class Application
         $this->stack[] = $middleware;
     }
 
-    private function implementsPsr15Middleware($middleware): bool
+    private function canBeStackedUp($middleware): bool
     {
         if (is_object($middleware)) {
             return $middleware instanceof Middleware;
