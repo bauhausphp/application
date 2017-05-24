@@ -12,11 +12,6 @@ class Application
 {
     private $stack = [];
 
-    public function stack(): array
-    {
-        return $this->stack;
-    }
-
     public function stackUp($middleware): void
     {
         if (false === $this->canStackUp($middleware)) {

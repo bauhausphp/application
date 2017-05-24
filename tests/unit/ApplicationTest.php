@@ -17,30 +17,6 @@ class ApplicationTest extends TestCase
 
     /**
      * @test
-     */
-    public function stackUpPsr15Middleware()
-    {
-        $middleware = new PassMiddleware();
-        $expectedStack = [$middleware];
-
-        $this->application->stackUp($middleware);
-
-        $this->assertEquals($expectedStack, $this->application->stack());
-    }
-
-    /**
-     * @test
-     */
-    public function stackUpPsr15MiddlewareFromString()
-    {
-        $this->application->stackUp(PassMiddleware::class);
-        $expectedStack = [PassMiddleware::class];
-
-        $this->assertEquals($expectedStack, $this->application->stack());
-    }
-
-    /**
-     * @test
      * @dataProvider notPsr15Middlewares
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Can only stack up PSR-15 middlewares
