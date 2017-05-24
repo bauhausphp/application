@@ -77,15 +77,15 @@ class ApplicationTest extends TestCase
 
     public function applicationsThatReachTheGroundDelegator(): array
     {
-        $appWithEmptyStack = new Application();
+        $emptyStackApp = new Application();
 
-        $appWithPassMiddleware = new Application();
-        $appWithPassMiddleware->stackUp(new PassMiddleware());
-        $appWithPassMiddleware->stackUp(new PassMiddleware());
+        $onlyPassMiddlewareApp = new Application();
+        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
+        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
 
         return [
-            [$appWithEmptyStack],
-            [$appWithPassMiddleware],
+            [$emptyStackApp],
+            [$onlyPassMiddlewareApp],
         ];
     }
 
@@ -106,25 +106,25 @@ class ApplicationTest extends TestCase
 
     public function applicationsThatReturnResponse(): array
     {
-        $aResponse = $this->createMock(ResponseInterface::class);
-        $anotherResponse = $this->createMock(ResponseInterface::class);
+        $responseOne = $this->createMock(ResponseInterface::class);
+        $responseTwo = $this->createMock(ResponseInterface::class);
 
         $passMiddleware = new PassMiddleware();
-        $aFixedResponseMiddleware = new FixedResponseMiddleware($aResponse);
-        $anotherFixedResponseMiddleware = new FixedResponseMiddleware($anotherResponse);
+        $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
+        $fixedResponseMiddlewareTwo = new FixedResponseMiddleware($responseTwo);
 
-        $anApplication = new Application();
-        $anApplication->stackUp($aFixedResponseMiddleware);
-        $anApplication->stackUp($passMiddleware);
+        $applicationOne = new Application();
+        $applicationOne->stackUp($fixedResponseMiddlewareOne);
+        $applicationOne->stackUp($passMiddleware);
 
-        $anotherApplication = new Application();
-        $anotherApplication->stackUp($aFixedResponseMiddleware);
-        $anotherApplication->stackUp($anotherFixedResponseMiddleware);
-        $anotherApplication->stackUp($passMiddleware);
+        $applicationTwo = new Application();
+        $applicationTwo->stackUp($fixedResponseMiddlewareOne);
+        $applicationTwo->stackUp($fixedResponseMiddlewareTwo);
+        $applicationTwo->stackUp($passMiddleware);
 
         return [
-            [$anApplication, $aResponse],
-            [$anotherApplication, $anotherResponse],
+            [$applicationOne, $responseOne],
+            [$applicationTwo, $responseTwo],
         ];
     }
 }
