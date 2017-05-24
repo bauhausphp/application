@@ -1,6 +1,6 @@
 <?php
 
-namespace Bauhaus;
+namespace Bauhaus\Application;
 
 use RuntimeException;
 

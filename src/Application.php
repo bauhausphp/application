@@ -7,6 +7,9 @@ use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Bauhaus\Application\Delegator;
+use Bauhaus\Application\GroundDelegator;
+use Bauhaus\Application\GroundDelegatorReachedException;
 
 class Application
 {

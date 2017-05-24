@@ -50,7 +50,7 @@ class ApplicationTest extends TestCase
     /**
      * @test
      * @dataProvider applicationsThatReachTheGroundDelegator
-     * @expectedException \Bauhaus\GroundDelegatorReachedException
+     * @expectedException \Bauhaus\Application\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
     public function exceptionOccursWhenEveryMiddlewareStackedDelegateTheProcess(
