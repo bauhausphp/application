@@ -19,21 +19,21 @@ class Application
 
     public function stackUp($middleware): void
     {
-        if (false === $this->canBeStackedUp($middleware)) {
+        if (false === $this->canStackUp($middleware)) {
             throw new InvalidArgumentException('Can only stack up PSR-15 middlewares');
         }
 
         $this->stack[] = $middleware;
     }
 
-    public function process(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $headDelegator = $this->buildDelegatorChain();
 
         return $headDelegator->process($request);
     }
 
-    private function canBeStackedUp($middleware): bool
+    private function canStackUp($middleware): bool
     {
         if (is_object($middleware)) {
             return $middleware instanceof MiddlewareInterface;

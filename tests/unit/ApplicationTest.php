@@ -45,7 +45,7 @@ class ApplicationTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Can only stack up PSR-15 middlewares
      */
-    public function exceptionOccursWhenStackUpANotPsr15Middleware(
+    public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
         $this->application->stackUp($notPsr15Middleware);
@@ -67,12 +67,12 @@ class ApplicationTest extends TestCase
      * @expectedException \Bauhaus\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
-    public function exceptionOccursWhenAllMiddlewaresInStackDelegateTheProcess(
+    public function exceptionOccursWhenEveryMiddlewareStackedDelegateTheProcess(
         Application $application
     ) {
         $serverRequest = $this->createMock(ServerRequestInterface::class);
 
-        $application->process($serverRequest);
+        $application->handle($serverRequest);
     }
 
     public function applicationsThatReachTheGroundDelegator(): array
@@ -91,20 +91,20 @@ class ApplicationTest extends TestCase
 
     /**
      * @test
-     * @dataProvider applicationsThatReturnResponse
+     * @dataProvider applicationsThatReturnFixedResponse
      */
-    public function processServerRequestDelegatingItToTheMiddlewareStack(
+    public function handleServerRequestDelegatingItToTheMiddlewareChain(
         Application $application,
         ResponseInterface $expectedResponse
     ) {
         $serverRequest = $this->createMock(ServerRequestInterface::class);
 
-        $response = $application->process($serverRequest);
+        $response = $application->handle($serverRequest);
 
         $this->assertSame($expectedResponse, $response);
     }
 
-    public function applicationsThatReturnResponse(): array
+    public function applicationsThatReturnFixedResponse(): array
     {
         $responseOne = $this->createMock(ResponseInterface::class);
         $responseTwo = $this->createMock(ResponseInterface::class);
