@@ -8,13 +8,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class ApplicationTest extends TestCase
 {
-    private $application;
-
-    protected function setUp()
-    {
-        $this->application = new Application();
-    }
-
     /**
      * @test
      * @dataProvider notPsr15Middlewares
@@ -24,7 +17,9 @@ class ApplicationTest extends TestCase
     public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
-        $this->application->stackUp($notPsr15Middleware);
+        $application = new Application();
+
+        $application->stackUp($notPsr15Middleware);
     }
 
     public function notPsr15Middlewares()
