@@ -54,7 +54,7 @@ class Application
     {
         $currentDelegator = new GroundDelegator();
 
-        foreach($this->middlewareStack as $middleware) {
+        foreach ($this->middlewareStack as $middleware) {
             $currentDelegator = new Delegator($middleware, $currentDelegator);
         }
 
