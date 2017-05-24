@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
-use Bauhaus\FixedResponseMiddleware;
+use Bauhaus\Middlewares\FixedResponseMiddleware;
 
 class DelegatorTest extends TestCase
 {

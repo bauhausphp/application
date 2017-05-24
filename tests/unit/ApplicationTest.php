@@ -5,6 +5,9 @@ namespace Bauhaus;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Bauhaus\Middlewares\PassMiddleware;
+use Bauhaus\Middlewares\NotPsr15Middleware;
+use Bauhaus\Middlewares\FixedResponseMiddleware;
 
 class ApplicationTest extends TestCase
 {
