@@ -10,58 +10,6 @@ class ApplicationTest extends TestCase
 {
     /**
      * @test
-     * @dataProvider notPsr15Middlewares
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Can only stack up PSR-15 middlewares
-     */
-    public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
-        $notPsr15Middleware
-    ) {
-        $application = new Application();
-
-        $application->stackUp($notPsr15Middleware);
-    }
-
-    public function notPsr15Middlewares()
-    {
-        return [
-            [NotPsr15Middleware::class],
-            [new NotPsr15Middleware()],
-            ['some string'],
-            [123],
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider applicationsThatReachTheGroundDelegator
-     * @expectedException \Bauhaus\GroundDelegatorReachedException
-     * @expectedExceptionMessage Ground delegator reached
-     */
-    public function exceptionOccursWhenEveryMiddlewareStackedDelegateTheProcess(
-        Application $application
-    ) {
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
-
-        $application->handle($serverRequest);
-    }
-
-    public function applicationsThatReachTheGroundDelegator(): array
-    {
-        $emptyStackApp = new Application();
-
-        $onlyPassMiddlewareApp = new Application();
-        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
-        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
-
-        return [
-            [$emptyStackApp],
-            [$onlyPassMiddlewareApp],
-        ];
-    }
-
-    /**
-     * @test
      * @dataProvider applicationsThatReturnFixedResponse
      */
     public function handleServerRequestDelegatingItToTheMiddlewareChain(
@@ -96,6 +44,58 @@ class ApplicationTest extends TestCase
         return [
             [$applicationOne, $responseOne],
             [$applicationTwo, $responseTwo],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider applicationsThatReachTheGroundDelegator
+     * @expectedException \Bauhaus\GroundDelegatorReachedException
+     * @expectedExceptionMessage Ground delegator reached
+     */
+    public function exceptionOccursWhenEveryMiddlewareStackedDelegateTheProcess(
+        Application $application
+    ) {
+        $serverRequest = $this->createMock(ServerRequestInterface::class);
+
+        $application->handle($serverRequest);
+    }
+
+    public function applicationsThatReachTheGroundDelegator(): array
+    {
+        $emptyStackApp = new Application();
+
+        $onlyPassMiddlewareApp = new Application();
+        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
+        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
+
+        return [
+            [$emptyStackApp],
+            [$onlyPassMiddlewareApp],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider notPsr15Middlewares
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Can only stack up PSR-15 middlewares
+     */
+    public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
+        $notPsr15Middleware
+    ) {
+        $application = new Application();
+
+        $application->stackUp($notPsr15Middleware);
+    }
+
+    public function notPsr15Middlewares()
+    {
+        return [
+            [NotPsr15Middleware::class],
+            [new NotPsr15Middleware()],
+            ['some string'],
+            [123],
         ];
     }
 }
