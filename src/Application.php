@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class Application
 {
-    private $stack = [];
+    private $middlewareStack = [];
 
     public function stackUp($middleware): void
     {
@@ -18,14 +18,14 @@ class Application
             throw new InvalidArgumentException('Can only stack up PSR-15 middlewares');
         }
 
-        $this->stack[] = $middleware;
+        $this->middlewareStack[] = $middleware;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $headDelegator = $this->buildDelegatorChain();
+        $firstHandler = $this->buildChain();
 
-        return $headDelegator->process($request);
+        return $firstHandler->process($request);
     }
 
     private function canStackUp($middleware): bool
@@ -47,11 +47,11 @@ class Application
         return in_array(MiddlewareInterface::class, $implementedInterfaces);
     }
 
-    private function buildDelegatorChain(): DelegateInterface
+    private function buildChain(): DelegateInterface
     {
         $currentDelegator = new GroundDelegator();
 
-        foreach($this->stack as $middleware) {
+        foreach($this->middlewareStack as $middleware) {
             $currentDelegator = new Delegator($middleware, $currentDelegator);
         }
 
