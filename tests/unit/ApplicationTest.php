@@ -43,7 +43,7 @@ class ApplicationTest extends TestCase
      * @test
      * @dataProvider notPsr15Middlewares
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Only PSR-15 Middlewares can be stacked up
+     * @expectedExceptionMessage Can only stack up PSR-15 middlewares
      */
     public function exceptionOccursWhenStackUpANotPsr15Middleware(
         $notPsr15Middleware

@@ -20,9 +20,7 @@ class Application
     public function stackUp($middleware): void
     {
         if (false === $this->canBeStackedUp($middleware)) {
-            throw new InvalidArgumentException(
-                'Only PSR-15 Middlewares can be stacked up'
-            );
+            throw new InvalidArgumentException('Can only stack up PSR-15 middlewares');
         }
 
         $this->stack[] = $middleware;
