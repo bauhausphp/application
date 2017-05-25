@@ -18,6 +18,11 @@
         }
     ],
 
+    "scripts": {
+        "test:cs": "phpcs --standard=tests/phpcs.xml --colors -ps",
+        "test:unit": "phpunit -c tests/phpunit.xml --colors=always"
+    },
+
     "autoload": {
         "psr-4": {
             "Bauhaus\\": "src"
