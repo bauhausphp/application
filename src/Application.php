@@ -7,13 +7,20 @@ use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Container\ContainerInterface;
 use Bauhaus\Application\Delegator;
 use Bauhaus\Application\GroundDelegator;
 use Bauhaus\Application\GroundDelegatorReachedException;
 
 class Application
 {
+    private $diContainer;
     private $middlewareStack = [];
+
+    public function __construct(ContainerInterface $diContainer = null)
+    {
+        $this->diContainer = $diContainer;
+    }
 
     public function stackUp($middleware): void
     {
@@ -57,6 +64,10 @@ class Application
         $currentDelegator = new GroundDelegator();
 
         foreach ($this->middlewareStack as $middleware) {
+            if (is_string($middleware)) {
+                $middleware = $this->diContainer->get($middleware);
+            }
+
             $currentDelegator = new Delegator($middleware, $currentDelegator);
         }
 

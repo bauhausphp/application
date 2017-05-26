@@ -5,6 +5,7 @@ namespace Bauhaus;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Container\ContainerInterface;
 use Bauhaus\Middlewares\PassMiddleware;
 use Bauhaus\Middlewares\NotPsr15Middleware;
 use Bauhaus\Middlewares\FixedResponseMiddleware;
@@ -100,5 +101,27 @@ class ApplicationTest extends TestCase
             ['some string'],
             [123],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function middlewaresStackedUpWithStringAreLoadedFromDiCotnainer()
+    {
+        $response = $this->createMock(ResponseInterface::class);
+        $serverRequest = $this->createMock(ServerRequestInterface::class);
+        $fixedResponseMiddleware = new FixedResponseMiddleware($response);
+
+        $diContainer = $this->createMock(ContainerInterface::class);
+        $diContainer
+            ->method('get')
+            ->will($this->returnValue($fixedResponseMiddleware));
+
+        $application = new Application($diContainer);
+        $application->stackUp(FixedResponseMiddleware::class);
+
+        $result = $application->handle($serverRequest);
+
+        $this->assertSame($response, $result);
     }
 }
