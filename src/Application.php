@@ -35,9 +35,9 @@ class Application
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $firstHandler = $this->buildChain();
+        $firstDelegator = $this->buildChain();
 
-        return $firstHandler->process($request);
+        return $firstDelegator->process($request);
     }
 
     private function canStackUp($middleware): bool
@@ -61,16 +61,16 @@ class Application
 
     private function buildChain(): DelegateInterface
     {
-        $currentDelegator = new GroundDelegator();
+        $firstDelegator = new GroundDelegator();
 
         foreach ($this->middlewareStack as $middleware) {
             if (is_string($middleware)) {
                 $middleware = $this->diContainer->get($middleware);
             }
 
-            $currentDelegator = new Delegator($middleware, $currentDelegator);
+            $firstDelegator = new Delegator($middleware, $firstDelegator);
         }
 
-        return $currentDelegator;
+        return $firstDelegator;
     }
 }
