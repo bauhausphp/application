@@ -8,7 +8,7 @@
 [![License](https://poser.pugx.org/bauhaus/middleware-chain/license?format=flat-square)](LICENSE)
 [![composer.lock available](https://poser.pugx.org/bauhaus/middleware-chain/composerlock?format=flat-square)](https://packagist.org/packages/bauhaus/middleware-chain)
 
-# Bauhaus Application
+# Bauhaus Middleware Chain
 
 This package helps you to build a [PSR-15 Middleware](https://github.com/php-fig/fig-standards/tree/master/proposed/http-middleware)
 chain to process [PSR-7 Server Requests](http://www.php-fig.org/psr/psr-7/#psrhttpmessageserverrequestinterface)
@@ -17,17 +17,17 @@ and get [PSR-7 Response](http://www.php-fig.org/psr/psr-7/#psrhttpmessagerespons
 ```php
 <?php
 
-use Bauhaus\Application;
+use Bauhaus\MiddlewareChain;
 use SomeVendor\Middleware1;
 use AnotherVendor\Middleware2;
 
-$diContainer = require_once 'bootstrap.php'; // Psr\Container\ContainerInterface
+$diContainer = require_once 'diContinaer.php'; // Psr\Container\ContainerInterface
 $request = require_once 'request.php';
 
-$app = new Application($diContainer);
+$chain = new Chain($diContainer);
 
-$app->stackUp(new Middleware1());
-$app->stackUp(Middleware2::class); // This will be loaded with $diContainer->get(Middleware2::class)
+$chain->stackUp(new Middleware1());
+$chain->stackUp(Middleware2::class); // This will be loaded with $diContainer->get(Middleware2::class)
 
-$response = $app->handle($request);
+$response = $chain->handle($request);
 ```
