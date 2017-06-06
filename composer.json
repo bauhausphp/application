@@ -1,6 +1,6 @@
 {
-    "name": "bauhaus/application",
-    "description": "PSR-15 middleware chain application",
+    "name": "bauhaus/middleware-chain",
+    "description": "Bauhaus' PSR-15 middleware chain",
     "type": "library",
     "license": "MIT",
 
