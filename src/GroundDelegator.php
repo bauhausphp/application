@@ -9,6 +9,6 @@ class GroundDelegator implements DelegateInterface
 {
     public function process(ServerRequestInterface $request)
     {
-        throw new GroundDelegatorReachedException();
+        throw new GroundDelegatorReachedException($request);
     }
 }
