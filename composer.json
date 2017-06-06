@@ -6,9 +6,11 @@
 
     "keywords": [
         "bauhaus",
-        "bauhaus application",
         "psr 15 middleware",
-        "psr 15 application"
+        "psr 15 middleware chain",
+        "middleware chain",
+        "middleware",
+        "chain"
     ],
 
     "authors": [
