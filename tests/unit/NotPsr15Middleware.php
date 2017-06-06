@@ -1,6 +1,6 @@
 <?php
 
-namespace Bauhaus\Middlewares;
+namespace Bauhaus\MiddlewareChain;
 
 class NotPsr15Middleware
 {

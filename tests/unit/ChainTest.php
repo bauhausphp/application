@@ -1,33 +1,30 @@
 <?php
 
-namespace Bauhaus;
+namespace Bauhaus\MiddlewareChain;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Container\ContainerInterface;
-use Bauhaus\Middlewares\PassMiddleware;
-use Bauhaus\Middlewares\NotPsr15Middleware;
-use Bauhaus\Middlewares\FixedResponseMiddleware;
 
-class ApplicationTest extends TestCase
+class ChainTest extends TestCase
 {
     /**
      * @test
-     * @dataProvider applicationsThatReturnFixedResponse
+     * @dataProvider chainsThatReturnFixedResponse
      */
     public function handleServerRequestDelegatingItToTheMiddlewareChain(
-        Application $application,
+        Chain $chain,
         ResponseInterface $expectedResponse
     ) {
         $serverRequest = $this->createMock(ServerRequestInterface::class);
 
-        $response = $application->handle($serverRequest);
+        $response = $chain->handle($serverRequest);
 
         $this->assertSame($expectedResponse, $response);
     }
 
-    public function applicationsThatReturnFixedResponse(): array
+    public function chainsThatReturnFixedResponse(): array
     {
         $responseOne = $this->createMock(ResponseInterface::class);
         $responseTwo = $this->createMock(ResponseInterface::class);
@@ -36,46 +33,46 @@ class ApplicationTest extends TestCase
         $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
         $fixedResponseMiddlewareTwo = new FixedResponseMiddleware($responseTwo);
 
-        $applicationOne = new Application();
-        $applicationOne->stackUp($fixedResponseMiddlewareOne);
-        $applicationOne->stackUp($passMiddleware);
+        $chainOne = new Chain();
+        $chainOne->stackUp($fixedResponseMiddlewareOne);
+        $chainOne->stackUp($passMiddleware);
 
-        $applicationTwo = new Application();
-        $applicationTwo->stackUp($fixedResponseMiddlewareOne);
-        $applicationTwo->stackUp($fixedResponseMiddlewareTwo);
-        $applicationTwo->stackUp($passMiddleware);
+        $chainTwo = new Chain();
+        $chainTwo->stackUp($fixedResponseMiddlewareOne);
+        $chainTwo->stackUp($fixedResponseMiddlewareTwo);
+        $chainTwo->stackUp($passMiddleware);
 
         return [
-            [$applicationOne, $responseOne],
-            [$applicationTwo, $responseTwo],
+            [$chainOne, $responseOne],
+            [$chainTwo, $responseTwo],
         ];
     }
 
     /**
      * @test
-     * @dataProvider applicationsThatReachTheGroundDelegator
-     * @expectedException \Bauhaus\Application\GroundDelegatorReachedException
+     * @dataProvider chainsThatReachTheGroundDelegator
+     * @expectedException \Bauhaus\MiddlewareChain\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
-    public function exceptionOccursWhenEveryMiddlewareStackedDelegateTheProcess(
-        Application $application
+    public function exceptionOccursWhenEveryStackedMiddlewareDelegateTheProcess(
+        Chain $chain
     ) {
         $serverRequest = $this->createMock(ServerRequestInterface::class);
 
-        $application->handle($serverRequest);
+        $chain->handle($serverRequest);
     }
 
-    public function applicationsThatReachTheGroundDelegator(): array
+    public function chainsThatReachTheGroundDelegator(): array
     {
-        $emptyStackApp = new Application();
+        $emptyStackChain = new Chain();
 
-        $onlyPassMiddlewareApp = new Application();
-        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
-        $onlyPassMiddlewareApp->stackUp(new PassMiddleware());
+        $passMiddlewareChain = new Chain();
+        $passMiddlewareChain->stackUp(new PassMiddleware());
+        $passMiddlewareChain->stackUp(new PassMiddleware());
 
         return [
-            [$emptyStackApp],
-            [$onlyPassMiddlewareApp],
+            [$emptyStackChain],
+            [$passMiddlewareChain],
         ];
     }
 
@@ -88,9 +85,9 @@ class ApplicationTest extends TestCase
     public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
-        $application = new Application();
+        $chain = new Chain();
 
-        $application->stackUp($notPsr15Middleware);
+        $chain->stackUp($notPsr15Middleware);
     }
 
     public function notPsr15Middlewares()
@@ -117,10 +114,10 @@ class ApplicationTest extends TestCase
             ->method('get')
             ->will($this->returnValue($fixedResponseMiddleware));
 
-        $application = new Application($diContainer);
-        $application->stackUp(FixedResponseMiddleware::class);
+        $chain = new Chain($diContainer);
+        $chain->stackUp(FixedResponseMiddleware::class);
 
-        $result = $application->handle($serverRequest);
+        $result = $chain->handle($serverRequest);
 
         $this->assertSame($response, $result);
     }

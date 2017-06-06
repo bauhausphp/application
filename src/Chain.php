@@ -1,6 +1,6 @@
 <?php
 
-namespace Bauhaus;
+namespace Bauhaus\MiddlewareChain;
 
 use InvalidArgumentException;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -8,11 +8,8 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Container\ContainerInterface;
-use Bauhaus\Application\Delegator;
-use Bauhaus\Application\GroundDelegator;
-use Bauhaus\Application\GroundDelegatorReachedException;
 
-class Application
+class Chain
 {
     private $diContainer;
     private $middlewareStack = [];
