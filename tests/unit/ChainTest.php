@@ -66,13 +66,13 @@ class ChainTest extends TestCase
     {
         $emptyStackChain = new Chain();
 
-        $onlyPassMiddlewareChain = new Chain();
-        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
-        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
+        $passMiddlewareChain = new Chain();
+        $passMiddlewareChain->stackUp(new PassMiddleware());
+        $passMiddlewareChain->stackUp(new PassMiddleware());
 
         return [
             [$emptyStackChain],
-            [$onlyPassMiddlewareChain],
+            [$passMiddlewareChain],
         ];
     }
 
