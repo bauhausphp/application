@@ -1,6 +1,6 @@
 <?php
 
-namespace Bauhaus\Application;
+namespace Bauhaus\MiddlewareChain;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
