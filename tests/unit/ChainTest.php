@@ -117,7 +117,7 @@ class ChainTest extends TestCase
         $diContainer = $this->createMock(Container::class);
         $diContainer
             ->method('get')
-            ->will($this->returnValue(new FixedResponseMiddleware($expectedResponse)));
+            ->willReturn(new FixedResponseMiddleware($expectedResponse));
 
         $chain = Chain::createWithDiContainer($diContainer);
         $chain->stackUp(FixedResponseMiddleware::class);
