@@ -12,16 +12,16 @@ class DelegatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldDelegateToItsMiddleware()
+    public function shouldDelegateTheProcessToItsMiddleware()
     {
-        $fixedResponse = $this->createMock(Response::class);
+        $expectedResponse = $this->createMock(Response::class);
+        $fixedResponseMiddleware = new FixedResponseMiddleware($expectedResponse);
         $dummyDelegator = $this->createMock(Delegate::class);
-        $serverRequest = $this->createMock(ServerRequest::class);
-        $fixedResponseMiddleware = new FixedResponseMiddleware($fixedResponse);
         $delegator = new Delegator($fixedResponseMiddleware, $dummyDelegator);
+        $serverRequest = $this->createMock(ServerRequest::class);
 
         $response = $delegator->process($serverRequest);
 
-        $this->assertSame($fixedResponse, $response);
+        $this->assertSame($expectedResponse, $response);
     }
 }

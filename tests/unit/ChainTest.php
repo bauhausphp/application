@@ -28,52 +28,59 @@ class ChainTest extends TestCase
     {
         $responseOne = $this->createMock(Response::class);
         $responseTwo = $this->createMock(Response::class);
-
+        $responseThree = $this->createMock(Response::class);
         $passMiddleware = new PassMiddleware();
         $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
         $fixedResponseMiddlewareTwo = new FixedResponseMiddleware($responseTwo);
+        $fixedResponseMiddlewareThree = new FixedResponseMiddleware($responseThree);
 
         $chainOne = Chain::create();
         $chainOne->stackUp($fixedResponseMiddlewareOne);
-        $chainOne->stackUp($passMiddleware);
 
         $chainTwo = Chain::create();
-        $chainTwo->stackUp($fixedResponseMiddlewareOne);
         $chainTwo->stackUp($fixedResponseMiddlewareTwo);
         $chainTwo->stackUp($passMiddleware);
+
+        $chainThree = Chain::create();
+        $chainThree->stackUp($fixedResponseMiddlewareOne);
+        $chainThree->stackUp($fixedResponseMiddlewareThree);
+        $chainThree->stackUp($passMiddleware);
 
         return [
             [$chainOne, $responseOne],
             [$chainTwo, $responseTwo],
+            [$chainThree, $responseThree],
         ];
     }
 
     /**
      * @test
-     * @dataProvider chainsThatReachTheGroundDelegator
      * @expectedException \Bauhaus\MiddlewareChain\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
-    public function exceptionOccursWhenEveryStackedMiddlewareDelegateTheProcess(
-        Chain $chain
-    ) {
+    public function exceptionOccursWhenTryToHandleServerRequestWithAnEmptyChain()
+    {
+        $emptyChain = Chain::create();
+
         $serverRequest = $this->createMock(ServerRequest::class);
 
-        $chain->handle($serverRequest);
+        $emptyChain->handle($serverRequest);
     }
 
-    public function chainsThatReachTheGroundDelegator(): array
+    /**
+     * @test
+     * @expectedException \Bauhaus\MiddlewareChain\GroundDelegatorReachedException
+     * @expectedExceptionMessage Ground delegator reached
+     */
+    public function exceptionOccursWhenEveryStackedMiddlewareDelegate()
     {
-        $emptyStackChain = Chain::create();
+        $onlyPassMiddlewareChain = Chain::create();
+        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
+        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
 
-        $passMiddlewareChain = Chain::create();
-        $passMiddlewareChain->stackUp(new PassMiddleware());
-        $passMiddlewareChain->stackUp(new PassMiddleware());
+        $serverRequest = $this->createMock(ServerRequest::class);
 
-        return [
-            [$emptyStackChain],
-            [$passMiddlewareChain],
-        ];
+        $onlyPassMiddlewareChain->handle($serverRequest);
     }
 
     /**
@@ -103,22 +110,19 @@ class ChainTest extends TestCase
     /**
      * @test
      */
-    public function middlewaresStackedUpWithStringAreLoadedFromDiCotnainer()
+    public function loadFromTheDiCotnainerMiddlewaresStackedUpWithString()
     {
-        $response = $this->createMock(Response::class);
+        $expectedResponse = $this->createMock(Response::class);
         $serverRequest = $this->createMock(ServerRequest::class);
-        $fixedResponseMiddleware = new FixedResponseMiddleware($response);
-
         $diContainer = $this->createMock(Container::class);
         $diContainer
             ->method('get')
-            ->will($this->returnValue($fixedResponseMiddleware));
+            ->will($this->returnValue(new FixedResponseMiddleware($expectedResponse)));
 
         $chain = Chain::createWithDiContainer($diContainer);
         $chain->stackUp(FixedResponseMiddleware::class);
+        $response = $chain->handle($serverRequest);
 
-        $result = $chain->handle($serverRequest);
-
-        $this->assertSame($response, $result);
+        $this->assertSame($expectedResponse, $response);
     }
 }
