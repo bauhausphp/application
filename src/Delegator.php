@@ -2,24 +2,24 @@
 
 namespace Bauhaus\MiddlewareChain;
 
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface as Middleware;
+use Interop\Http\ServerMiddleware\DelegateInterface as Delegate;
+use Psr\Http\Message\ServerRequestInterface as ServerRequest;
 
-class Delegator implements DelegateInterface
+class Delegator implements Delegate
 {
     private $middleware;
     private $nextDelegator;
 
     public function __construct(
-        MiddlewareInterface $middleware,
-        DelegateInterface $nextDelegator
+        Middleware $middleware,
+        Delegate $nextDelegator
     ) {
         $this->middleware = $middleware;
         $this->nextDelegator = $nextDelegator;
     }
 
-    public function process(ServerRequestInterface $request)
+    public function process(ServerRequest $request)
     {
         return $this->middleware->process($request, $this->nextDelegator);
     }

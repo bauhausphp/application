@@ -3,9 +3,9 @@
 namespace Bauhaus\MiddlewareChain;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface as ServerRequest;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Container\ContainerInterface as Container;
 
 class ChainTest extends TestCase
 {
@@ -15,9 +15,9 @@ class ChainTest extends TestCase
      */
     public function handleServerRequestDelegatingItToTheMiddlewareChain(
         Chain $chain,
-        ResponseInterface $expectedResponse
+        Response $expectedResponse
     ) {
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
+        $serverRequest = $this->createMock(ServerRequest::class);
 
         $response = $chain->handle($serverRequest);
 
@@ -26,8 +26,8 @@ class ChainTest extends TestCase
 
     public function chainsThatReturnFixedResponse(): array
     {
-        $responseOne = $this->createMock(ResponseInterface::class);
-        $responseTwo = $this->createMock(ResponseInterface::class);
+        $responseOne = $this->createMock(Response::class);
+        $responseTwo = $this->createMock(Response::class);
 
         $passMiddleware = new PassMiddleware();
         $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
@@ -57,7 +57,7 @@ class ChainTest extends TestCase
     public function exceptionOccursWhenEveryStackedMiddlewareDelegateTheProcess(
         Chain $chain
     ) {
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
+        $serverRequest = $this->createMock(ServerRequest::class);
 
         $chain->handle($serverRequest);
     }
@@ -105,11 +105,11 @@ class ChainTest extends TestCase
      */
     public function middlewaresStackedUpWithStringAreLoadedFromDiCotnainer()
     {
-        $response = $this->createMock(ResponseInterface::class);
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
+        $response = $this->createMock(Response::class);
+        $serverRequest = $this->createMock(ServerRequest::class);
         $fixedResponseMiddleware = new FixedResponseMiddleware($response);
 
-        $diContainer = $this->createMock(ContainerInterface::class);
+        $diContainer = $this->createMock(Container::class);
         $diContainer
             ->method('get')
             ->will($this->returnValue($fixedResponseMiddleware));
