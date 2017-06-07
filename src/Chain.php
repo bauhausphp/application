@@ -58,17 +58,17 @@ class Chain
 
     private function buildChain(): Delegate
     {
-        $firstDelegator = new GroundDelegator();
+        $nextDelegator = new GroundDelegator();
 
         foreach ($this->middlewareStack as $middleware) {
             if (is_string($middleware)) {
                 $middleware = $this->diContainer->get($middleware);
             }
 
-            $firstDelegator = new Delegator($middleware, $firstDelegator);
+            $nextDelegator = new Delegator($middleware, $nextDelegator);
         }
 
-        return $firstDelegator;
+        return $nextDelegator;
     }
 
     public static function create()
