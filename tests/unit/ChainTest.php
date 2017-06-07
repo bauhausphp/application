@@ -33,11 +33,11 @@ class ChainTest extends TestCase
         $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
         $fixedResponseMiddlewareTwo = new FixedResponseMiddleware($responseTwo);
 
-        $chainOne = new Chain();
+        $chainOne = Chain::create();
         $chainOne->stackUp($fixedResponseMiddlewareOne);
         $chainOne->stackUp($passMiddleware);
 
-        $chainTwo = new Chain();
+        $chainTwo = Chain::create();
         $chainTwo->stackUp($fixedResponseMiddlewareOne);
         $chainTwo->stackUp($fixedResponseMiddlewareTwo);
         $chainTwo->stackUp($passMiddleware);
@@ -64,9 +64,9 @@ class ChainTest extends TestCase
 
     public function chainsThatReachTheGroundDelegator(): array
     {
-        $emptyStackChain = new Chain();
+        $emptyStackChain = Chain::create();
 
-        $passMiddlewareChain = new Chain();
+        $passMiddlewareChain = Chain::create();
         $passMiddlewareChain->stackUp(new PassMiddleware());
         $passMiddlewareChain->stackUp(new PassMiddleware());
 
@@ -85,7 +85,7 @@ class ChainTest extends TestCase
     public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
-        $chain = new Chain();
+        $chain = Chain::create();
 
         $chain->stackUp($notPsr15Middleware);
     }
@@ -114,7 +114,7 @@ class ChainTest extends TestCase
             ->method('get')
             ->will($this->returnValue($fixedResponseMiddleware));
 
-        $chain = new Chain($diContainer);
+        $chain = Chain::createWithDiContainer($diContainer);
         $chain->stackUp(FixedResponseMiddleware::class);
 
         $result = $chain->handle($serverRequest);

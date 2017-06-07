@@ -14,7 +14,7 @@ class Chain
     private $diContainer;
     private $middlewareStack = [];
 
-    public function __construct(ContainerInterface $diContainer = null)
+    private function __construct(?ContainerInterface $diContainer)
     {
         $this->diContainer = $diContainer;
     }
@@ -69,5 +69,17 @@ class Chain
         }
 
         return $firstDelegator;
+    }
+
+    public static function create()
+    {
+        $withoutDiContainer = null;
+
+        return new self($withoutDiContainer);
+    }
+
+    public static function createWithDiContainer(ContainerInterface $diContainer)
+    {
+        return new self($diContainer);
     }
 }
