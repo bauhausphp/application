@@ -3,25 +3,25 @@
 namespace Bauhaus\MiddlewareChain;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface as Delegate;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as ServerRequest;
 
 class DelegatorTest extends TestCase
 {
     /**
      * @test
      */
-    public function shouldDelegateToItsMiddleware()
+    public function shouldDelegateTheProcessToItsMiddleware()
     {
-        $fixedResponse = $this->createMock(ResponseInterface::class);
-        $dummyDelegator = $this->createMock(DelegateInterface::class);
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
-        $fixedResponseMiddleware = new FixedResponseMiddleware($fixedResponse);
+        $expectedResponse = $this->createMock(Response::class);
+        $fixedResponseMiddleware = new FixedResponseMiddleware($expectedResponse);
+        $dummyDelegator = $this->createMock(Delegate::class);
         $delegator = new Delegator($fixedResponseMiddleware, $dummyDelegator);
+        $serverRequest = $this->createMock(ServerRequest::class);
 
         $response = $delegator->process($serverRequest);
 
-        $this->assertSame($fixedResponse, $response);
+        $this->assertSame($expectedResponse, $response);
     }
 }

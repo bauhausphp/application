@@ -3,9 +3,9 @@
 namespace Bauhaus\MiddlewareChain;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface as ServerRequest;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Container\ContainerInterface as Container;
 
 class ChainTest extends TestCase
 {
@@ -15,9 +15,9 @@ class ChainTest extends TestCase
      */
     public function handleServerRequestDelegatingItToTheMiddlewareChain(
         Chain $chain,
-        ResponseInterface $expectedResponse
+        Response $expectedResponse
     ) {
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
+        $serverRequest = $this->createMock(ServerRequest::class);
 
         $response = $chain->handle($serverRequest);
 
@@ -26,54 +26,61 @@ class ChainTest extends TestCase
 
     public function chainsThatReturnFixedResponse(): array
     {
-        $responseOne = $this->createMock(ResponseInterface::class);
-        $responseTwo = $this->createMock(ResponseInterface::class);
-
+        $responseOne = $this->createMock(Response::class);
+        $responseTwo = $this->createMock(Response::class);
+        $responseThree = $this->createMock(Response::class);
         $passMiddleware = new PassMiddleware();
         $fixedResponseMiddlewareOne = new FixedResponseMiddleware($responseOne);
         $fixedResponseMiddlewareTwo = new FixedResponseMiddleware($responseTwo);
+        $fixedResponseMiddlewareThree = new FixedResponseMiddleware($responseThree);
 
-        $chainOne = new Chain();
+        $chainOne = Chain::create();
         $chainOne->stackUp($fixedResponseMiddlewareOne);
-        $chainOne->stackUp($passMiddleware);
 
-        $chainTwo = new Chain();
-        $chainTwo->stackUp($fixedResponseMiddlewareOne);
+        $chainTwo = Chain::create();
         $chainTwo->stackUp($fixedResponseMiddlewareTwo);
         $chainTwo->stackUp($passMiddleware);
+
+        $chainThree = Chain::create();
+        $chainThree->stackUp($fixedResponseMiddlewareOne);
+        $chainThree->stackUp($fixedResponseMiddlewareThree);
+        $chainThree->stackUp($passMiddleware);
 
         return [
             [$chainOne, $responseOne],
             [$chainTwo, $responseTwo],
+            [$chainThree, $responseThree],
         ];
     }
 
     /**
      * @test
-     * @dataProvider chainsThatReachTheGroundDelegator
      * @expectedException \Bauhaus\MiddlewareChain\GroundDelegatorReachedException
      * @expectedExceptionMessage Ground delegator reached
      */
-    public function exceptionOccursWhenEveryStackedMiddlewareDelegateTheProcess(
-        Chain $chain
-    ) {
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
+    public function exceptionOccursWhenTryToHandleServerRequestWithAnEmptyChain()
+    {
+        $emptyChain = Chain::create();
 
-        $chain->handle($serverRequest);
+        $serverRequest = $this->createMock(ServerRequest::class);
+
+        $emptyChain->handle($serverRequest);
     }
 
-    public function chainsThatReachTheGroundDelegator(): array
+    /**
+     * @test
+     * @expectedException \Bauhaus\MiddlewareChain\GroundDelegatorReachedException
+     * @expectedExceptionMessage Ground delegator reached
+     */
+    public function exceptionOccursWhenEveryStackedMiddlewareDelegate()
     {
-        $emptyStackChain = new Chain();
+        $onlyPassMiddlewareChain = Chain::create();
+        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
+        $onlyPassMiddlewareChain->stackUp(new PassMiddleware());
 
-        $passMiddlewareChain = new Chain();
-        $passMiddlewareChain->stackUp(new PassMiddleware());
-        $passMiddlewareChain->stackUp(new PassMiddleware());
+        $serverRequest = $this->createMock(ServerRequest::class);
 
-        return [
-            [$emptyStackChain],
-            [$passMiddlewareChain],
-        ];
+        $onlyPassMiddlewareChain->handle($serverRequest);
     }
 
     /**
@@ -85,7 +92,7 @@ class ChainTest extends TestCase
     public function exceptionOccursWhenTryToStackUpANotPsr15Middleware(
         $notPsr15Middleware
     ) {
-        $chain = new Chain();
+        $chain = Chain::create();
 
         $chain->stackUp($notPsr15Middleware);
     }
@@ -103,22 +110,19 @@ class ChainTest extends TestCase
     /**
      * @test
      */
-    public function middlewaresStackedUpWithStringAreLoadedFromDiCotnainer()
+    public function loadFromTheDiCotnainerMiddlewaresStackedUpWithString()
     {
-        $response = $this->createMock(ResponseInterface::class);
-        $serverRequest = $this->createMock(ServerRequestInterface::class);
-        $fixedResponseMiddleware = new FixedResponseMiddleware($response);
-
-        $diContainer = $this->createMock(ContainerInterface::class);
+        $expectedResponse = $this->createMock(Response::class);
+        $serverRequest = $this->createMock(ServerRequest::class);
+        $diContainer = $this->createMock(Container::class);
         $diContainer
             ->method('get')
-            ->will($this->returnValue($fixedResponseMiddleware));
+            ->will($this->returnValue(new FixedResponseMiddleware($expectedResponse)));
 
-        $chain = new Chain($diContainer);
+        $chain = Chain::createWithDiContainer($diContainer);
         $chain->stackUp(FixedResponseMiddleware::class);
+        $response = $chain->handle($serverRequest);
 
-        $result = $chain->handle($serverRequest);
-
-        $this->assertSame($response, $result);
+        $this->assertSame($expectedResponse, $response);
     }
 }

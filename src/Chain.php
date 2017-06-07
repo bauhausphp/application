@@ -3,18 +3,18 @@
 namespace Bauhaus\MiddlewareChain;
 
 use InvalidArgumentException;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Container\ContainerInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface as Middleware;
+use Interop\Http\ServerMiddleware\DelegateInterface as Delegate;
+use Psr\Http\Message\ServerRequestInterface as ServerRequest;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Container\ContainerInterface as Container;
 
 class Chain
 {
     private $diContainer;
     private $middlewareStack = [];
 
-    public function __construct(ContainerInterface $diContainer = null)
+    private function __construct(?Container $diContainer)
     {
         $this->diContainer = $diContainer;
     }
@@ -30,7 +30,7 @@ class Chain
         $this->middlewareStack[] = $middleware;
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequest $request): Response
     {
         $firstDelegator = $this->buildChain();
 
@@ -40,7 +40,7 @@ class Chain
     private function canStackUp($middleware): bool
     {
         if (is_object($middleware)) {
-            return $middleware instanceof MiddlewareInterface;
+            return $middleware instanceof Middleware;
         }
 
         if (false === is_string($middleware)) {
@@ -53,21 +53,33 @@ class Chain
 
         $implementedInterfaces = class_implements($middleware);
 
-        return in_array(MiddlewareInterface::class, $implementedInterfaces);
+        return in_array(Middleware::class, $implementedInterfaces);
     }
 
-    private function buildChain(): DelegateInterface
+    private function buildChain(): Delegate
     {
-        $firstDelegator = new GroundDelegator();
+        $nextDelegator = new GroundDelegator();
 
         foreach ($this->middlewareStack as $middleware) {
             if (is_string($middleware)) {
                 $middleware = $this->diContainer->get($middleware);
             }
 
-            $firstDelegator = new Delegator($middleware, $firstDelegator);
+            $nextDelegator = new Delegator($middleware, $nextDelegator);
         }
 
-        return $firstDelegator;
+        return $nextDelegator;
+    }
+
+    public static function create()
+    {
+        $withoutDiContainer = null;
+
+        return new self($withoutDiContainer);
+    }
+
+    public static function createWithDiContainer(Container $diContainer)
+    {
+        return new self($diContainer);
     }
 }
