@@ -2,6 +2,6 @@
 <ruleset>
  <rule ref="PSR2"/>
 
- <file>./../src</file>
- <file>./unit</file>
+ <file>./src</file>
+ <file>./tests/unit</file>
 </ruleset>

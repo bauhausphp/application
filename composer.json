@@ -21,8 +21,8 @@
     ],
 
     "scripts": {
-        "test:cs": "phpcs --standard=tests/phpcs.xml --colors -ps",
-        "test:unit": "phpunit -c tests/phpunit.xml --colors=always"
+        "test:cs": "phpcs --colors -ps",
+        "test:unit": "phpunit --colors=always"
     },
 
     "autoload": {
