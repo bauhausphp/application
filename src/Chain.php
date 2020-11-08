@@ -9,10 +9,18 @@ use Psr\Http\Message\ServerRequestInterface as ServerRequest;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Container\ContainerInterface as Container;
 
-class Chain
+class Chain // implements ServerRequestHandler
 {
     private $diContainer;
     private $middlewareStack = [];
+
+    // /** @var Delegator[] */ private array $handlers;
+
+    // public static function lazy(Container, string $first, string ...$next): self
+    // public static function create(Middleware $first, Middleware ...$next): self
+
+    // public function process ...
+    // public function list(): string[]
 
     private function __construct(?Container $diContainer)
     {

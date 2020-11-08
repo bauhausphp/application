@@ -12,7 +12,7 @@ class DelegatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldDelegateTheProcessToItsMiddleware()
+   public function shouldDelegateTheProcessToItsMiddleware()
     {
         $expectedResponse = $this->createMock(Response::class);
         $fixedResponseMiddleware = new FixedResponseMiddleware($expectedResponse);
