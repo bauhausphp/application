@@ -17,5 +17,5 @@ jobs:
     - name: Setup
       run: make setup pkg=middleware-chain branch=$(echo ${GITHUB_REF#refs/heads/})
 
-    - name: Test
-      run: make test pkg=middleware-chain
+    - name: Tests
+      run: make tests pkg=middleware-chain
