@@ -15,7 +15,7 @@ jobs:
         repository: bauhausphp/contributor-tool
 
     - name: Setup
-      run: make setup pkg=middleware-chain
+      run: make setup pkg=middleware-chain branch=$(echo ${GITHUB_REF#refs/heads/})
 
     - name: Test
       run: make test pkg=middleware-chain
