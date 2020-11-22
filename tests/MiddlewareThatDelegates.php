@@ -4,12 +4,13 @@ namespace Bauhaus\MiddlewareStack;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as ServerRequest;
+use Psr\Http\Server\MiddlewareInterface as Middleware;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
-class GroundDelegator implements RequestHandler
+class MiddlewareThatDelegates implements Middleware
 {
-    public function handle(ServerRequest $request): Response
+    public function process(ServerRequest $request, RequestHandler $handler): Response
     {
-        throw new GroundDelegatorReached();
+        return $handler->handle($request);
     }
 }
