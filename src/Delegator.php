@@ -1,26 +1,21 @@
 <?php
 
-namespace Bauhaus\MiddlewareChain;
+namespace Bauhaus\MiddlewareStack;
 
-use Interop\Http\ServerMiddleware\MiddlewareInterface as Middleware;
-use Interop\Http\ServerMiddleware\DelegateInterface as Delegate;
+use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as ServerRequest;
+use Psr\Http\Server\MiddlewareInterface as Middleware;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
-class Delegator implements Delegate
+/**
+ * @internal
+ */
+class Delegator implements RequestHandler
 {
-    private $middleware;
-    private $nextDelegator;
+    public function __construct(private Middleware $middleware, private RequestHandler $nextHandler) {}
 
-    public function __construct(
-        Middleware $middleware,
-        Delegate $nextDelegator
-    ) {
-        $this->middleware = $middleware;
-        $this->nextDelegator = $nextDelegator;
-    }
-
-    public function process(ServerRequest $request)
+    public function handle(ServerRequest $request): Response
     {
-        return $this->middleware->process($request, $this->nextDelegator);
+        return $this->middleware->process($request, $this->nextHandler);
     }
 }

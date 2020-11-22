@@ -1,49 +1,37 @@
 {
-    "name": "bauhaus/middleware-chain",
-    "description": "Bauhaus' PSR-15 middleware chain",
+    "name": "bauhaus/middleware-stack",
+    "description": "PSR-15 middleware chain",
+    "keywords": ["bauhaus", "psr-15", "middleware", "chain"],
+
     "type": "library",
     "license": "MIT",
 
-    "keywords": [
-        "bauhaus",
-        "psr 15 middleware",
-        "psr 15 middleware chain",
-        "middleware chain",
-        "middleware",
-        "chain"
-    ],
-
-    "authors": [
-        {
-            "name": "Felipe Martins",
-            "homepage": "https://fefas.net"
-        }
-    ],
-
     "scripts": {
         "test:cs": "phpcs --colors -ps",
-        "test:unit": "phpunit --colors=always"
+        "test:unit": "phpunit --colors=always --do-not-cache-result",
+        "tests": ["@test:cs", "@test:unit"]
     },
 
     "autoload": {
         "psr-4": {
-            "Bauhaus\\MiddlewareChain\\": "src"
+            "Bauhaus\\MiddlewareStack\\": "src/"
         }
-    },
-
-    "require": {
-        "http-interop/http-middleware": "^0.4.1",
-        "psr/container": "^1.0"
     },
 
     "autoload-dev": {
         "psr-4": {
-            "Bauhaus\\MiddlewareChain\\": "tests/unit"
+            "Bauhaus\\MiddlewareStack\\": "tests/"
         }
     },
 
+    "require": {
+        "php": "^8.0",
+        "psr/container": "^1.0",
+        "psr/http-server-middleware": "^1.0.1",
+        "psr/http-server-handler": "^1.0.1"
+    },
+
     "require-dev": {
-        "phpunit/phpunit": "^6.1",
-        "squizlabs/php_codesniffer": "^3.0"
+        "bauhaus/test-kit": "dev-main"
     }
 }
