@@ -1,7 +1,10 @@
 <?php
 
-namespace Bauhaus\MiddlewareStack;
+namespace Bauhaus;
 
+use Bauhaus\MiddlewareStack\GroundDelegatorReached;
+use Bauhaus\MiddlewareStack\LazyMiddleware;
+use Bauhaus\MiddlewareStack\TestCase;
 use Psr\Container\ContainerInterface as Container;
 
 class MiddlewareStackTest extends TestCase

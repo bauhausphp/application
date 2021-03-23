@@ -1,0 +1,28 @@
+name: CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: bauhausphp/contributor-tool
+
+    - name: Setup
+      run: |
+        BRANCH=$(echo ${GITHUB_REF} | cut -d '/' -f 3-)
+        make setup package=middleware-chain branch=${BRANCH}
+
+    - name: Tests
+      run: make tests package=middleware-chain
+
+    - name: Coverage
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+      run: |
+        printenv | grep COVERALLS_REPO_TOKEN >> .docker-run.env
+        make coverage package=service-resolver
+

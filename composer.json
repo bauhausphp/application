@@ -1,7 +1,7 @@
 {
     "name": "bauhaus/middleware-stack",
-    "description": "PSR-15 middleware chain",
-    "keywords": ["bauhaus", "psr-15", "middleware", "chain"],
+    "description": "PSR-15 middleware stack",
+    "keywords": ["psr-15", "middleware", "stack", "chain"],
 
     "type": "library",
     "license": "MIT",
@@ -14,13 +14,13 @@
 
     "autoload": {
         "psr-4": {
-            "Bauhaus\\MiddlewareStack\\": "src/"
+            "Bauhaus\\": "src/"
         }
     },
 
     "autoload-dev": {
         "psr-4": {
-            "Bauhaus\\MiddlewareStack\\": "tests/"
+            "Bauhaus\\": "tests/"
         }
     },
 

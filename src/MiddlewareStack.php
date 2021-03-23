@@ -1,7 +1,10 @@
 <?php
 
-namespace Bauhaus\MiddlewareStack;
+namespace Bauhaus;
 
+use Bauhaus\MiddlewareStack\Delegator;
+use Bauhaus\MiddlewareStack\GroundDelegator;
+use Bauhaus\MiddlewareStack\LazyMiddleware;
 use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as ServerRequest;
@@ -19,7 +22,10 @@ class MiddlewareStack implements RequestHandler
 
     public static function lazy(Container $container, string ...$middlewareIds): self
     {
-        $lazyMiddlewares = array_map(fn(string $id) => new LazyMiddleware($container, $id), $middlewareIds);
+        $lazyMiddlewares = array_map(
+            fn(string $id) => new LazyMiddleware($container, $id),
+            $middlewareIds
+        );
 
         return new self(...$lazyMiddlewares);
     }

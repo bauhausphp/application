@@ -8,9 +8,15 @@ use Psr\Http\Message\ServerRequestInterface as ServerRequest;
 use Psr\Http\Server\MiddlewareInterface as Middleware;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
+/**
+ * @internal
+ */
 class LazyMiddleware implements Middleware
 {
-    public function __construct(private Container $container, private string $id) {}
+    public function __construct(
+        private Container $container,
+        private string $id,
+    ) {}
 
     public function process(ServerRequest $request, RequestHandler $handler): Response
     {

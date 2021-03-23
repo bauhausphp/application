@@ -12,7 +12,10 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
  */
 class Delegator implements RequestHandler
 {
-    public function __construct(private Middleware $middleware, private RequestHandler $nextHandler) {}
+    public function __construct(
+        private Middleware $middleware,
+        private RequestHandler $nextHandler,
+    ) {}
 
     public function handle(ServerRequest $request): Response
     {
